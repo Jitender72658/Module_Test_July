@@ -31,80 +31,107 @@ const apiKey = '98fc1d63fdc4dcf6b9c074cce4e64803';
 const addCity = document.getElementById("cityName");
 const cityForm = document.getElementById("cityForm");
 let cityNameList =['london', 'delhi', 'mumbai','paris','tokyo', 'sydney','rome','barcelona','istanbul','beijing','bangkok','amsterdam','moscow','budapest','chicago','dhaka','shanghai'];
-
+const alreadyExistCityElement = document.getElementById("cityAlreadyExistDiv");
+const btnDiv = document.getElementById("btnDiv");
 cityForm.addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent the form from submitting and reloading the page
     const cityName = addCity.value;
     console.log(cityName);
    if(cityNameList.includes(cityName.toLowerCase())){
     console.log("name-present");
-     const alreadyExistCityElement = document.getElementById("cityAlreadyExistDiv");
      alreadyExistCityElement.classList.remove('already-exist-city-div');
-
-     const btnDiv = document.getElementById("btnDiv");
      btnDiv.classList.add("btn-div-hidden");
+   }
+   else{
+    cityNameList.push(cityName.toLowerCase());
+    if (event.target === cityForm) {
+        formContainer.classList.add('hidden');
+    }
+    const parentElement = document.getElementById("weatherData"); // Replace with your parent element's ID
 
-     const closeBtn2 = document.getElementById("closeButton2");
-      closeBtn2.addEventListener('click', (event) => {
-        console.log(btnDiv.classList.remove("btn-div-hidden"));
-        alreadyExistCityElement.classList.add("already-exist-city-div");
-    });
-
-
-    // const promptDiv = document.getElementById('promptContainer')
-    //  promptDiv.classList.remove('hidden');
-
-    //  const promptCloseButton = document.getElementById('closeButton2');
-    //  promptCloseButton.addEventListener('click', (event) => {
-    // // Stop event propagation to prevent the click on closeButton from reaching popupContainer
-    
-    //  promptDiv.classList.add('hidden');
-    //  });
-    //  promptDiv.addEventListener('click', (event) => {
-    //     if (event.target === promptDiv) {
-    //         promptDiv.classList.add('hidden');
-    //     }
-    // });
-
+    while (parentElement.firstChild) {
+     parentElement.removeChild(parentElement.firstChild);
+}
+     loaddata();
+    setTimeout(refresh,1000);
    }
    
   })
 
+  const closeBtn2 = document.getElementById("closeButton2");
+  closeBtn2.addEventListener('click', (event) => {
+     event.stopPropagation();
+    btnDiv.classList.remove("btn-div-hidden");
+     alreadyExistCityElement.classList.add("already-exist-city-div");
+});
+
+let weatherData = [];
+
+function loaddata(){
+  //  weatherData=[];
 cityNameList.forEach((city)=>{
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
     fetch(apiUrl)
    .then(response => response.json())
-   .then(data => {
-      renderWeatherList(data);
+   .then((data) => {
+      weatherData.push(data);
    })
    .catch(error => console.error("Error fetching data:", error));
 })
-
-
-//    name: City Name
-// weather: Array containing weather conditions (e.g., "Rain", "Clear")
-// main: Object containing temperature, humidity, pressure
-// wind: Object containing wind speed and direction
-// clouds: Object containing cloudiness percentage
-// sys: Object containing country code, sunrise, and sunset times
-
-
-    function renderWeatherList(coin){
+}
+loaddata();
+setTimeout(refresh,1000);
+console.log(weatherData);
+function refresh(){
+    weatherData.sort((a, b) => a.main.temp - b.main.temp);
+    for(let i = 0;i<weatherData.length;i++){
+     const weatherDataItem =weatherData[i];
     const itemDiv = document.createElement('div');
-    itemDiv.className="data-item";
+    itemDiv.className="weatherDataItem-item";
+    itemDiv.style.display='flex';
+    itemDiv.style.justifyContent="space-between";
 
-    const cityName = document.createElement('h6');
-    cityName.innerText=coin.name;
-    const weather = document.createElement('p');
-    weather.innerText="weather";
+
+    const leftDiv = document.createElement('div');
+
+    const temperature = document.createElement('p');
+    temperature.innerText = weatherDataItem.main.temp+"°";
+    temperature.style.fontSize='45px';
+    const tempDiv = document.createElement('div');
+    tempDiv.style.display="flex";
+    tempDiv.style.gap="10px";
+    const maxTemp = document.createElement('p');
+    maxTemp.innerText = "H: "+weatherDataItem.main.temp_max+"°";
+    const minTemp = document.createElement('p');
+    minTemp.innerText = "L: "+weatherDataItem.main.temp_min+"°";
+    tempDiv.appendChild(maxTemp);
+    tempDiv.appendChild(minTemp);
+
+
+    const cityName = document.createElement('p');
+    cityName.innerText=weatherDataItem.name+", "+  weatherDataItem.sys.country;
+
+    leftDiv.appendChild(temperature)
+    leftDiv.appendChild(tempDiv);
+    leftDiv.appendChild(cityName);
+
+    const rightDiv = document.createElement('div');
+    const weatherIcon = document.createElement('p');
+    weatherIcon.innerText= weatherDataItem.weather[0].icon;
+    weatherIcon.style.marginTop="100px";
+    const weatherDescription = document.createElement('p');
+    weatherDescription.innerText= weatherDataItem.weather[0].description;
     const wind = document.createElement('p');
     wind.innerText ="wind";
     const clouds = document.createElement('p');
-    const sys = document.createElement('p');
-    itemDiv.appendChild(cityName);
-    itemDiv.appendChild(weather);
-    itemDiv.appendChild(wind);
-    itemDiv.appendChild(clouds);
-    itemDiv.appendChild(sys);
+
+    rightDiv.appendChild(weatherIcon);
+    rightDiv.appendChild(weatherDescription);
+
+
+    itemDiv.appendChild(leftDiv);
+    itemDiv.appendChild(rightDiv);
     contentDiv.appendChild(itemDiv);
+    
   }
+}
