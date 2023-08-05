@@ -56,11 +56,11 @@ body{
 
 .data-item, .content-section>div{
     background-image: url('./Images/Rectangle.png');
-    background-size: cover;
+     background-size: cover;
     background-repeat: no-repeat; 
-    background-position: center center; 
-    padding: 25px;
-    border-radius: 20px;
+    background-position: center center;  
+    padding: 7px 20px ;
+    border-radius: 10px;
 }
 
 
@@ -124,33 +124,16 @@ body{
 .content-section{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    column-gap: 5vw;
+    column-gap: 4vw;
     row-gap: 3vw;
     margin-top: 50px;
     text-align: center;
 }
 .content-section div{
     color: white;
+    border-radius: 55px;
 }
 
-/* #promptContainer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  #promptContent {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  } */
 
 .already-exist-city-div{
     display: none;
@@ -174,4 +157,31 @@ body{
     border-radius: 4px;
     padding: 10px 20px;
     cursor: pointer;
+}
+
+@media screen and (max-width:1250px) and (min-width:800px){
+    .content-section{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 4vw;
+        row-gap: 3vw;
+        margin-top: 50px;
+        text-align: center;  
+    }
+    .content-section>div{
+        margin:auto;
+     }
+}
+@media screen and (max-width:800px){
+    .content-section{
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        column-gap: 4vw;
+        row-gap: 3vw;
+        margin-top: 50px;
+        text-align: center;
+    }
+    .content-section>div{
+       margin:auto;
+    }
 }

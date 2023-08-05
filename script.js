@@ -93,6 +93,11 @@ function refresh(){
 
 
     const leftDiv = document.createElement('div');
+    leftDiv.style.display="flex";
+    leftDiv.style.flexDirection="column";
+    leftDiv.style.justifyContent="start";
+    leftDiv.style.alignItems="start";
+    leftDiv.style.rowGap="10px";
 
     const temperature = document.createElement('p');
     temperature.innerText = weatherDataItem.main.temp+"°";
@@ -110,20 +115,24 @@ function refresh(){
 
     const cityName = document.createElement('p');
     cityName.innerText=weatherDataItem.name+", "+  weatherDataItem.sys.country;
+    cityName.style.fontSize="19px";
 
     leftDiv.appendChild(temperature)
     leftDiv.appendChild(tempDiv);
     leftDiv.appendChild(cityName);
 
     const rightDiv = document.createElement('div');
-    const weatherIcon = document.createElement('p');
-    weatherIcon.innerText= weatherDataItem.weather[0].icon;
-    weatherIcon.style.marginTop="100px";
+    rightDiv.style.display="flex";
+    rightDiv.style.flexDirection="column";
+    rightDiv.style.justifyContent="start";
+    rightDiv.style.alignItems="center";
+    rightDiv.style.rowGap="10px";
+    const weatherIcon = document.createElement('img');
+    weatherIcon.src= `http://openweathermap.org/img/wn/${weatherDataItem.weather[0].icon}.png`;
+    weatherIcon.style.width="170px";
     const weatherDescription = document.createElement('p');
     weatherDescription.innerText= weatherDataItem.weather[0].description;
-    const wind = document.createElement('p');
-    wind.innerText ="wind";
-    const clouds = document.createElement('p');
+
 
     rightDiv.appendChild(weatherIcon);
     rightDiv.appendChild(weatherDescription);
