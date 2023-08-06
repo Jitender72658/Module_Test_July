@@ -4,6 +4,9 @@ const contentDiv = document.getElementById('weatherData');
 const addCityButton = document.getElementById('add-city');
 const formContainer = document.getElementById('formContainer');
 const closeButton = document.getElementById('closeButton1');
+const alreadyExistCityElement = document.getElementById("cityAlreadyExistDiv");
+const btnDiv = document.getElementById("btnDiv");
+const invalidCityDiv = document.getElementById("invalidCityDiv");
 
 // Add a click event listener to the button
 addCityButton.addEventListener('click', () => {
@@ -19,25 +22,44 @@ closeButton.addEventListener('click', (event) => {
     formContainer.classList.add('hidden');
 });
 
-// Close the pop-up when clicking outside the content
+const closeButton2 = document.getElementById("closeButton2");
+  closeButton2.addEventListener('click', (event) => {
+    event.stopPropagation();
+    btnDiv.classList.remove('btn-div-hidden');
+    alreadyExistCityElement.classList.add('already-exist-city-div');
+    formContainer.classList.add('hidden');
+});
+
+const closeButton3 = document.getElementById("closeButton3");
+  closeButton2.addEventListener('click', (event) => {
+    event.stopPropagation();
+    btnDiv.classList.remove('btn-div-hidden');
+    alreadyExistCityElement.classList.add('invalid-city-div');
+});
 formContainer.addEventListener('click', (event) => {
     if (event.target === formContainer) {
         formContainer.classList.add('hidden');
+       btnDiv.classList.remove('btn-div-hidden');
+       alreadyExistCityElement.classList.add('already-exist-city-div');
+       invalidCityDiv.classList.add('invalid-city-div');
     }
+
 });
+
+// Close the pop-up when clicking outside the content
+
 
 
 const apiKey = '98fc1d63fdc4dcf6b9c074cce4e64803';
 const addCity = document.getElementById("cityName");
 const cityForm = document.getElementById("cityForm");
 let cityNameList =['london', 'delhi', 'mumbai','paris','tokyo', 'sydney','rome','barcelona','istanbul','beijing','bangkok','amsterdam','moscow','budapest','chicago','dhaka','shanghai'];
-const alreadyExistCityElement = document.getElementById("cityAlreadyExistDiv");
-const btnDiv = document.getElementById("btnDiv");
+
 cityForm.addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent the form from submitting and reloading the page
     const cityName = addCity.value;
    if(cityNameList.includes(cityName.toLowerCase())){
-     alreadyExistCityElement.classList.remove('already-exist-city-div');
+    alreadyExistCityElement.classList.remove('already-exist-city-div');
      btnDiv.classList.add("btn-div-hidden");
    }
    else{
@@ -73,17 +95,12 @@ cityForm.addEventListener('submit', function (event) {
           loaddata().then(refresh);
         })
     checkingValidName().catch(()=>{
+        invalidCityDiv.classList.remove("invalid-city-div");
+        btnDiv.classList.add("btn-div-hidden");
     })
    }
    
   })
-
-  const closeBtn2 = document.getElementById("closeButton2");
-  closeBtn2.addEventListener('click', (event) => {
-     event.stopPropagation();
-    btnDiv.classList.remove("btn-div-hidden");
-     alreadyExistCityElement.classList.add("already-exist-city-div");
-});
 
 let weatherData = [];
 async function loaddata() {

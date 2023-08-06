@@ -149,6 +149,9 @@ body{
   .already-exist-city-div{
     display: none ;
   }
+  .invalid-city-div{
+    display: none;
+  }
 
   button{
     background-color: #007bff;
