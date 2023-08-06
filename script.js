@@ -1,4 +1,4 @@
-const contentDiv = document.getElementById('weather-data'); 
+const contentDiv = document.getElementById('weatherData'); 
 
 /// Adding a city
 const addCityButton = document.getElementById('add-city');
@@ -36,24 +36,44 @@ const btnDiv = document.getElementById("btnDiv");
 cityForm.addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent the form from submitting and reloading the page
     const cityName = addCity.value;
-    console.log(cityName);
    if(cityNameList.includes(cityName.toLowerCase())){
-    console.log("name-present");
      alreadyExistCityElement.classList.remove('already-exist-city-div');
      btnDiv.classList.add("btn-div-hidden");
    }
    else{
-    cityNameList.push(cityName.toLowerCase());
-    if (event.target === cityForm) {
-        formContainer.classList.add('hidden');
+    function checkingValidName(cityNmae) {
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
+    
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+               // Check if the response contains valid data
+                if (data.cod!=='404') {
+                    resolve(data);
+                } else {
+                    reject(new Error("Invalid data received"));
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
-    const parentElement = document.getElementById("weatherData"); // Replace with your parent element's ID
-
-    while (parentElement.firstChild) {
-     parentElement.removeChild(parentElement.firstChild);
-}
-     loaddata();
-    setTimeout(refresh,1000);
+       
+    checkingValidName().then(()=>{
+        cityNameList.push(cityName.toLowerCase());
+        if (event.target === cityForm) {
+            formContainer.classList.add('hidden');
+        }
+        const parentElement = document.getElementById("weatherData"); 
+        while (parentElement && parentElement.firstChild) {
+         parentElement.removeChild(parentElement.firstChild);
+           }
+          loaddata().then(refresh);
+        })
+    checkingValidName().catch(()=>{
+    })
    }
    
   })
@@ -66,22 +86,23 @@ cityForm.addEventListener('submit', function (event) {
 });
 
 let weatherData = [];
-
-function loaddata(){
-  //  weatherData=[];
-cityNameList.forEach((city)=>{
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-    fetch(apiUrl)
-   .then(response => response.json())
-   .then((data) => {
-      weatherData.push(data);
-   })
-   .catch(error => console.error("Error fetching data:", error));
-})
+async function loaddata() {
+    weatherData = [];
+    
+    for (const city of cityNameList) {
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            weatherData.push(data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
 }
-loaddata();
-setTimeout(refresh,1000);
-console.log(weatherData);
+
+loaddata().then(refresh);
+  
 function refresh(){
     weatherData.sort((a, b) => a.main.temp - b.main.temp);
     for(let i = 0;i<weatherData.length;i++){
